@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<robot name="mars_lite" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Arguments -->
+  <xacro:arg name="laser_enabled" default="1" />
+  <xacro:arg name="realsense_enabled" default="0" />
+
+  <!-- Gazebo plugin -->
+  <xacro:include filename="$(find mars_lite_description)/urdf/mars_lite.gazebo" />
+
+  <!-- Inertia matrices -->
+  <xacro:include filename="$(find mars_lite_description)/urdf/macros.xacro" />
+
+  <!-- Mobile platform properties -->
+  <xacro:property name="mob_base_length" value="0.780"/>
+  <xacro:property name="mob_base_width" value="0.510"/>
+  <xacro:property name="mob_base_height" value="0.37"/>
+  <xacro:property name="wheel_radius" value="0.1016"/>
+  <xacro:property name="wheels_distance" value="0.393"/>
+  <xacro:property name="base_to_wheels_axel" value="0.01045"/>
+  <xacro:property name="mob_base_lower_plate_length" value="0.630"/>
+
+  <!-- TM5 robot arm contrl box properties -->
+  <xacro:property name="tm_cntrl_box_length" value="0.29"/>
+  <xacro:property name="tm_cntrl_box_width" value="0.43"/>
+  <xacro:property name="tm_cntrl_box_height" value="0.23"/>
+  <xacro:property name="tm_cntrl_box_x_offset" value="-0.125"/>
+
+  <!-- arm positioning -->
+  <xacro:property name="tm_x_offset" value="0.350"/>
+
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+  <material name="lightgrey">
+    <color rgba="0.7 0.7 0.7 1.0"/>
+  </material>
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </xacro:macro>
+
+
+  <!-- Base Link -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+          <mesh filename="package://mars_lite_description/meshes/mob_plat.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${mob_base_height / 2 + 0.05}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${mob_base_lower_plate_length} ${mob_base_width} ${mob_base_height - 0.08}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 ${mob_base_height / 2 + 0.05}" rpy="0 0 0" />
+      <mass value="50.0" />
+      <xacro:box_inertia m="80.0" x="${mob_base_lower_plate_length}" y="${mob_base_width}" z="${mob_base_height - 0.08}" />
+    </inertial>
+  </link>
+
+  <!-- Dummy footprint link -->
+  <link name="base_footprint" />
+  <joint name="footprint_joint" type="fixed">
+    <origin xyz="0 0 ${-wheel_radius}" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="base_footprint"/>
+  </joint>
+
+
+  <!-- Caster support -->
+  <xacro:property name="support_wheel_redius" value="0.025"/>
+  <xacro:macro name="caster_support" params="prefix reflect_fr reflect_lr">
+    <link name="${prefix}_caster_support">
+      <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <sphere radius="${support_wheel_redius}"/>
+          </geometry>
+        </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.3" />
+        <xacro:sphere_inertia m="1.0" r="${support_wheel_redius}"  />
+      </inertial>
+    </link>
+    <joint name="${prefix}_caster_support_joint" type="continuous">
+      <axis xyz="0 1 0" rpy="0 0 0" />
+      <origin xyz="${0.225 * reflect_fr} ${0.17 * reflect_lr} ${-wheel_radius + support_wheel_redius }" rpy="0 0 0" />
+      <parent link="base_link"/>
+      <child link="${prefix}_caster_support"/>
+    </joint>
+    <gazebo reference="${prefix}_caster_support">
+        <mu1 value="0.0000"/>
+        <mu2 value="0.0000"/>
+        <kp  value="1000000.0" />
+        <kd  value="10000.0" />
+        <fdir1 value="1 0 0" />
+    </gazebo>
+  </xacro:macro>
+  <xacro:caster_support prefix="front_left" reflect_fr="1" reflect_lr="1"/>
+  <xacro:caster_support prefix="front_right" reflect_fr="1" reflect_lr="-1"/>
+  <xacro:caster_support prefix="back_left" reflect_fr="-1" reflect_lr="1"/>
+  <xacro:caster_support prefix="back_right" reflect_fr="-1" reflect_lr="-1"/>
+
+
+  <!-- Driving wheels -->
+  <xacro:macro name="wheel" params="prefix reflect">
+    <link name="${prefix}_wheel">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://mars_lite_description/meshes/wheel.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="0.03"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="2.0" />
+        <xacro:cylinder_inertia m="10" r="${wheel_radius}" h="0.03" />
+      </inertial>
+    </link>
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <axis xyz="0 1 0" rpy="0 0 0" />
+      <parent link="base_link"/>
+      <child link="${prefix}_wheel"/>
+      <origin xyz="0 ${reflect*wheels_distance/2} 0" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+  <xacro:wheel prefix="right" reflect="-1"/>
+  <xacro:wheel prefix="left" reflect="1"/>
+
+
+  <!-- Robot arm contrl box -->
+  <link name="tm_cntrl_box">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${tm_cntrl_box_length} ${tm_cntrl_box_width} ${tm_cntrl_box_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5.0" />
+      <xacro:box_inertia m="5.0" x="${tm_cntrl_box_length}" y="${tm_cntrl_box_width}" z="${tm_cntrl_box_height}" />
+    </inertial>
+  </link>
+  <joint name="base_link_to_cntrl_box" type="fixed">
+    <axis xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="tm_cntrl_box"/>
+    <origin xyz="${tm_cntrl_box_x_offset} 0 ${mob_base_height + tm_cntrl_box_height/2}" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- tm5_700 gazebo common stuff -->
+  <xacro:include filename="$(find tm5_description)/urdf/common.gazebo.xacro" />
+  <!-- tm5_700 -->
+  <xacro:include filename="$(find tm5_description)/urdf/tm5_700.urdf.xacro" />
+  <xacro:tm5_700_robot prefix="tm_" joint_limited="true" stl_mesh="true" />
+
+  <joint name="base_link_to_tm_base" type="fixed">
+    <parent link="base_link" />
+    <child link="tm_base" />
+    <origin xyz="${tm_x_offset} 0.0 ${mob_base_height}" rpy="0.0 0.0 0.0" />
+  </joint>
+
+  
+  <!-- Hokuyo utm30lx laser scanner -->
+  <xacro:if value="$(arg laser_enabled)">
+    <!-- Dummy merged laser frame -->
+    <link name="merged_laser_frame" />
+    <joint name="base_link_to_merged_laser_frame" type="fixed">
+      <parent link="base_link" />
+      <child link="merged_laser_frame" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <xacro:include filename="$(find hector_sensors_description)/urdf/hokuyo_utm30lx.urdf.xacro" />
+    <!-- back_laser -->
+    <xacro:hokuyo_utm30lx name="back_laser"
+                          parent="base_link"
+                          ros_topic="back_scan"
+                          update_rate="40"
+                          ray_count="1081"
+                          min_angle="-90"
+                          max_angle="90">
+      <origin xyz="-0.285 0.00 0.05" rpy="${pi} 0 ${pi}" />
+    </xacro:hokuyo_utm30lx>
+
+    <!-- front_laser -->
+    <xacro:hokuyo_utm30lx name="front_laser"
+                          parent="base_link"
+                          ros_topic="front_scan"
+                          update_rate="40"
+                          ray_count="1081"
+                          min_angle="-90"
+                          max_angle="90">
+      <origin xyz="0.285 0.00 0.05" rpy="${-pi} 0 0" />
+    </xacro:hokuyo_utm30lx>
+  </xacro:if>
+
+
+  <!-- Intel realsense D435 -->
+  <xacro:if value="$(arg realsense_enabled)">
+  <xacro:include filename="$(find mars_lite_description)/urdf/accessories/intel_realsense.urdf.xacro"/>
+    <xacro:intel_realsense_mount prefix="camera1" topic="camera1" parent_link="realsense_mount"/>
+    
+    <link name="realsense_mount"/>
+    <joint name="realsense_mount_joint" type="fixed">
+      <origin xyz="0 0.05 0.062" rpy="0 ${-pi / 2} ${-pi / 2}" />
+      <parent link="tm_wrist_3_link"/>
+      <child link="realsense_mount" />
+    </joint>
+  </xacro:if>
+
+  <!-- Intel realsense D435 -->
+  <xacro:if value="$(arg realsense_2_enabled)">
+  <xacro:include filename="$(find mars_lite_description)/urdf/accessories/intel_realsense.urdf.xacro"/>
+    <xacro:intel_realsense_mount prefix="camera2" topic="camera2" parent_link="realsense_mount_2"/>
+    
+    <link name="realsense_mount_2"/>
+    <joint name="realsense_mount_joint_2" type="fixed">
+      <origin xyz="-0.6 0 0.25" rpy="0 0 ${pi}" />
+      <parent link="tm_base"/>
+      <child link="realsense_mount_2" />
+    </joint>
+  </xacro:if>
+
+  <!-- Robotiq 85 gripper -->
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.urdf.xacro" />
+  <xacro:robotiq_85_gripper prefix="" parent="tm_flange_link" >
+    <origin xyz="0 0 0" rpy="${-pi / 2} ${-pi / 2} 0"/>
+  </xacro:robotiq_85_gripper>
+
+</robot>

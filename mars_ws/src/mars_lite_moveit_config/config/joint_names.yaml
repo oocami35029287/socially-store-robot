@@ -1,0 +1,1 @@
+controller_joint_names: [tm_shoulder_1_joint, tm_shoulder_2_joint, tm_elbow_joint, tm_wrist_1_joint, tm_wrist_2_joint, tm_wrist_3_joint]

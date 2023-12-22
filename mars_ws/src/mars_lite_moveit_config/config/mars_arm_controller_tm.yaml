@@ -1,0 +1,26 @@
+arm_controller:
+  type: position_controllers/JointTrajectoryController
+  joints: [tm_shoulder_1_joint, tm_shoulder_2_joint, tm_elbow_joint, tm_wrist_1_joint, tm_wrist_2_joint, tm_wrist_3_joint]
+  constraints:
+      goal_time: 0.6
+      stopped_velocity_tolerance: 0.05
+      tm_shoulder_1_joint: {trajectory: 0.1, goal: 0.1}
+      tm_shoulder_2_joint: {trajectory: 0.1, goal: 0.1}
+      tm_elbow_joint: {trajectory: 0.1, goal: 0.1}
+      tm_wrist_1_joint: {trajectory: 0.1, goal: 0.1}
+      tm_wrist_2_joint: {trajectory: 0.1, goal: 0.1}
+      tm_wrist_3_joint: {trajectory: 0.1, goal: 0.1}
+  stop_trajectory_duration: 0.5
+  state_publish_rate:  25
+  action_monitor_rate: 10
+
+
+joint_group_position_controller:
+  type: position_controllers/JointGroupPositionController
+  joints:
+     - tm_shoulder_1_joint
+     - tm_shoulder_2_joint
+     - tm_elbow_joint
+     - tm_wrist_1_joint
+     - tm_wrist_2_joint
+     - tm_wrist_3_joint

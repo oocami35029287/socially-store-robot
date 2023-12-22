@@ -1,0 +1,13 @@
+<launch>
+
+    <!-- 開啟apriltags -->
+    <!-- <include file="$(find apriltags_ros)/launch/apriltags_localization.launch">
+    </include> -->
+
+    <!-- 開啟導航速度控制器 -->
+    <node name="navigation_speed_controller" pkg="patrol" type="navigation_speed_controller" required="true" output="screen" />
+
+    <!-- 開啟導航速度控制器 -->
+    <node name="patrol_node" pkg="patrol" type="patrol_node" required="true" output="screen" />
+
+</launch>

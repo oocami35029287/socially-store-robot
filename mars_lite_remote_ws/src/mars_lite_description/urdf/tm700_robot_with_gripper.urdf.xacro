@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot name="tm700" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="prefix" value="tm_" />
+
+  <!-- gazebo stuff -->
+  <xacro:include filename="$(find tm_description)/urdf/common.gazebo.xacro" />
+  <xacro:include filename="$(find tm_description)/urdf/tm.gazebo.xacro" />
+  <xacro:tm_arm_gazebo prefix="${prefix}" />
+
+  <!-- tm700 -->
+  <xacro:include filename="$(find tm_description)/urdf/tm700.urdf.xacro" />
+  <xacro:tm700_robot prefix="${prefix}" joint_limited="true" />
+
+  <link name="world" />
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link="tm_base" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <!-- Frame for gripper TCP  -->
+  <link name="${prefix}_gripper"/>
+  <joint name="${prefix}tip_link_to_tm_gripper" type="fixed">
+    <parent link="${prefix}tip_link"/>
+    <child link="${prefix}_gripper"/>
+    <origin xyz="0 0 ${0.1628+0.0139}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Robotiq from Beta Robots fork-->
+	<xacro:include filename="$(find robotiq_2f_model)/model/robotiq_2f_85.urdf.xacro" />
+	<xacro:robotiq_2f_85 name="gripper" parent="tm_tip_link" precise_collision="false" adaptive_transmission="false">
+		<origin xyz="0 0 0" rpy="0 0 1.5708" />
+	</xacro:robotiq_2f_85>  
+
+</robot>

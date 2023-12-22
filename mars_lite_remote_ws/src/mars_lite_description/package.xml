@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mars_lite_description</name>
+  <version>1.0.0</version>
+  <description>Mars Lite description package</description>
+
+  <maintainer email="josuet.leoro@itri.org.tw">Josuet Leoro</maintainer>
+
+  <license>3-Clause BSD License</license>
+
+  <author email="josuet.leoro@itri.org.tw">Josuet Leoro</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>urdf</build_depend>
+  <build_export_depend>urdf</build_export_depend>
+  <exec_depend>urdf</exec_depend>
+
+  <export>
+  
+  </export>
+</package>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<scenario>
+  <!--Obstacles-->
+  <!--Pedestrians-->
+  <!--Pedestrians number4-->
+  <agent x="-3.53" y="1.96" n="2" dx="0.49" dy="0.49" type="0" />
+  <!--Pedestrians number5-->
+  <agent x="-2.32" y="-0.99" n="2" dx="0.49" dy="0.49" type="0" />
+  <!--Pedestrians number6-->
+  <waypoint id="waypoint6_0" x="3.30" y="3.35" r="1" />
+  <waypoint id="waypoint6_1" x="-2.31" y="3.61" r="1" />
+  <waypoint id="waypoint6_2" x="-2.35" y="-2.27" r="1" />
+  <agent x="3.38" y="-1.85" n="2" dx="0.49" dy="0.49" type="0">
+    <addwaypoint id="waypoint6_0" />
+    <addwaypoint id="waypoint6_1" />
+    <addwaypoint id="waypoint6_2" />
+  </agent>
+  <!--Robot-->
+  <agent x="5.47" y="0.69" r="1.570796" n="1" dx="0" dy="0" type="2" />
+</scenario>

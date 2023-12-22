@@ -1,0 +1,12 @@
+alias killgz="killall -9 gazebo & killall -9 gzserver  & killall -9 gzclient"
+alias sourcecatkin="source ~/socially-store-robot/catkin_ws/devel/setup.bash"
+alias sourcemars="source ~/socially-store-robot/mars_ws/devel/setup.bash"
+alias sourceyolo="source ~/socially-store-robot/yolo_ws/devel/setup.bash"
+###
+alias cmd1='sourcemars;  roslaunch pedsim_simulator gym_crowd_environment.launch scene_file:=crossing_corridor.xml'
+alias cmd2="sourcemars;  roslaunch pedsim_gazebo_plugin crossing_corridor.launch"
+alias cmd3="sourcemars;  roslaunch mars_lite_description spawn_mars.launch"
+alias cmd4='rosservice call /pedsim_simulator/unpause_simulation "{}"'
+alias cmd5="sourceyolo;  roslaunch scan yolodetect.launch"
+alias cmd6="sourcemars;  roslaunch path_finding astar_path_finding_with_social_proxemics.launch"
+

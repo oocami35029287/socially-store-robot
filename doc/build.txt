@@ -1,0 +1,20 @@
+[TODO]
+
+-------- Downloading docker image from dockerhub (takes ~10 mins) --------
+# In the project root
+source docker_run.sh [cuda10 | same]  # arg: cuda10 --> launch a new container
+                                      # arg: same   --> enter the same container
+---------------- Launching the docker container -----------------
+# In the catkin_ws/
+source compile_py36.sh   # (takes ~10 mins)
+-----------------------------
+#in docker
+
+sudo apt-get update
+sudo apt-get install -y ros-${ROS_DISTRO}-joint-trajectory-controller \
+    ros-${ROS_DISTRO}-gripper-action-controller \
+    ros-${ROS_DISTRO}-hector-models \
+    ros-${ROS_DISTRO}-ira-laser-tools
+#outside
+docker commit [container ID] [container name]
+

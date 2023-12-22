@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="robot_init_x" default="0.0" />
+    <arg name="robot_init_y" default="0.0" />
+
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <param name="robot_description"
+        command="$(find xacro)/xacro '$(find robotiq_description)/urdf/robotiq_85_gripper.xacro'" />
+
+    <!-- Spawn the robot model -->
+    <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" 
+        args="-param robot_description -urdf
+                -model robotiq_85_gripper
+                -unpause"
+                respawn="false" output="screen"
+                />
+
+    <!-- convert joint states to TF transforms for rviz, etc -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <!-- <param name="publish_frequency" type="double" value="50.0" /> -->
+        <!-- <param name="tf_prefix" type="string" value="" /> -->
+    </node>
+
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="true"/>
+        <rosparam param="source_list">[/joint_states]</rosparam>
+    </node> -->
+
+    <!-- Load Joint State Controller for Moveit -->
+    <rosparam file="$(find robotiq_gazebo)/config/robotiq85_gripper_controllers.yaml" command="load"/>
+    <node name="gripper_controller_spawner" pkg="controller_manager" type="controller_manager"
+        args="spawn gripper_controller" respawn="false" output="screen"/>
+
+
+    <!-- Load TM5 controllers -->
+    <!-- <rosparam file="$(find mars_lite_moveit_config)/config/mars_arm_controller_tm.yaml" command="load"/>
+    <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager"
+        args="spawn arm_controller" respawn="false" output="screen"/> -->
+
+    <!-- Fake Calibration -->
+    <!-- <node pkg="rostopic" type="rostopic" name="fake_joint_calibration"
+        args="pub /calibrated std_msgs/Bool true" /> -->
+
+    <!-- Load Joint State Controller for Moveit -->
+    <rosparam file="$(find robotiq_gazebo)/config/robotiq85_gripper_joint_state_controller.yaml" command="load"/>
+    <node name="joint_state_controller_spawner" pkg="controller_manager" type="controller_manager"
+        args="spawn joint_state_controller" respawn="false" output="screen"/>
+
+    <!-- <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager"
+        respawn="false" output="screen" args="load joint_group_position_controller" /> -->
+</launch>

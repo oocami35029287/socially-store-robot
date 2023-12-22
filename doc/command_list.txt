@@ -1,0 +1,162 @@
+﻿install list:
+
+sudo apt install wmctrl
+
+mpc:
+libeigen3-dev
+//--------------------------
+
+sudo prime-select intel
+sudo prime-select nvidia
+//---------------------------------------------------
+important links:
+coolcat 
+	https://github.com/coolcat647/socially-aware-walker
+	https://emanual.robotis.com/docs/en/platform/turtlebot3/navigation/
+		
+
+
+############################################
+for set up
+0. get my usb (UWU)
+
+1. Pull docker into  your PC
+	docker pull argsis/locobot:GPU
+	docker pull oocami35029287/marslite:latest
+2. docker permission
+	sudo chmod 777 /var/run/docker.sock
+	sudo chgrp docker /lib/systemd/system/docker.socket
+	sudo chmod g+w /lib/systemd/system/docker.socket
+	
+
+3.. first/second docker terminal
+	source gpu_run.sh
+	source gpu_join.sh
+4. In docker	
+	cd ~/sis2021_final
+	source catkin_make.sh
+	source environment.sh
+############################################
+install package
+1. for marslite
+	sudo apt-get install -y ros-${ROS_DISTRO}-joint-trajectory-controller \
+    ros-${ROS_DISTRO}-gripper-action-controller \
+    ros-${ROS_DISTRO}-hector-models \
+    ros-${ROS_DISTRO}-ira-laser-tools
+	
+2. for robotic hub
+	sudo apt-get install python-pip ros-${ROS_DISTRO}-robot-state-publisher ros-${ROS_DISTRO}-moveit \
+	ros-${ROS_DISTRO}-rosbridge-suite ros-${ROS_DISTRO}-joy ros-${ROS_DISTRO}-ros-control \
+	ros-${ROS_DISTRO}-ros-controllers ros-${ROS_DISTRO}-tf2-web-republisher \
+	sudo -H pip install rospkg jsonpickle
+	
+3. tf from python2 to python3 (config it if you want to use the feature of yolov4 )
+	link: https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3
+	pip install scipy
+	pip install numba
+	pip install filterpy
+
+    sudo apt update
+    sudo apt install python3-catkin-pkg-modules python3-rospkg-modules python3-empy
+
+    mkdir -p ~/catkin_ws/src; cd ~/catkin_ws
+    catkin_make
+    source devel/setup.bash
+    wstool init
+    wstool set -y src/geometry2 --git https://github.com/ros/geometry2 -v 0.6.5
+    wstool up
+    rosdep install --from-paths src --ignore-src -y -r
+
+	catkin_make --cmake-args \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+            -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m \
+            -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so
+			
+############################################
+start to run
+#1 simulation of robot with customer in shop
+1. 顧客模擬
+	roslaunch pedsim_simulator shopping_mall.launch
+2. gazebo模擬(貨架與顧客)
+	roslaunch pedsim_gazebo_plugin shopping_mall.launch 	
+	roslaunch mars_lite_description spawn_mars.launch
+3. 行人開始動
+	rosservice call /pedsim_simulator/unpause_simulation "{}"		
+4. mars
+	roslaunch mars_lite_description mars_gazebo_no_world.launch	
+5. rviz and moveit 
+	roslaunch mars_lite_moveit_config mars_lite_moveit_planning_execution_gz.launch
+6. human detection (proceeding )
+	roslaunch scan yolodetet.launch
+
+# simulation of robot with shelf
+
+1. launch  mars and shelf
+	roslaunch mars_lite_description mars_gazebo.launch realsense_enabled:=true world:=shelf
+2. rviz and moveit 
+	roslaunch mars_lite_description mars_gazebo.launch realsense_enabled:=true world:=shelf
+3. dope recognition (corrupt)
+	roslaunch dope dope.launch	
+
+# other control command 
+1. moveit
+	rosrun patrol warehouse_action 
+	rosrun patrol catch_action 
+	rosrun moveit_commander moveit_commander_cmdline.py
+	use tm_arm
+2. movebase
+	rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+############################################
+docker command
+
+1. save image 
+	docker ps
+	docker commit [Container ID] [Container name]
+2. kill docker 
+	docker ps
+	docker exec -i -t [Container ID] 
+	exi
+3. kill docker 
+	docker kill
+############################################
+other command
+
+1. kill gazebo
+	killall gzserver gzclient
+2. rostopic [tab]
+
+3. rosnode [tab]
+
+############################################
+walker
+############################################
+
+roslaunch pedsim_simulator gym_crowd_environment.launch scene_file:=crossing_corridor.xml
+roslaunch pedsim_gazebo_plugin crossing_corridor.launch
+roslaunch walker_description spawn_walker_gym.launch 
+rosservice call /pedsim_simulator/unpause_simulation "{}"
+
+#object tracking
+roslaunch multi_object_tracking mot2d_sim.launch
+##path finding 
+roslaunch path_finding astar_path_finding_with_social_proxemics.launch
+##path following
+roslaunch path_tracking path_tracking_autonomous.launch
+
+############################################
+marslite
+############################################
+roslaunch mars_lite_description mars_gazebo.launch realsense_enabled:=true 
+roslaunch mars_lite_moveit_config mars_lite_moveit_planning_execution_gz.launch
+############################################
+#important 
+##########################################
+roslaunch mars_lite_description spawn_mars.launch
+pedsom_simulator/launch/shopping_mall.launch
+pedsom_simulator/scenario/shopping_mall.xml
+
+#####################################
+#littlemagic
+####################################
+rosrun tf view_frames

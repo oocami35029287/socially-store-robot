@@ -1,0 +1,5 @@
+controller_list:
+    - name: ""
+      action_ns: tm_joint_trajectory_action
+      type: FollowJointTrajectory
+      joints: [tm_shoulder_1_joint, tm_shoulder_2_joint, tm_elbow_1_joint, tm_wrist_1_joint, tm_wrist_2_joint, tm_wrist_3_joint]

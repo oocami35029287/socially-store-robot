@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="robot_init_x" default="3.0" />
+    <arg name="robot_init_y" default="3.0" />
+    <arg name="robot_init_rot" default="0" />
+    <!-- Launch the init_base_link_frame node -->
+    <node name="initial_pose_publisher_node" pkg="mars_lite_description" type="initial_pose" output="screen">
+        <param name="robot_init_x" value="$(arg robot_init_x)"/>
+        <param name="robot_init_y" value="$(arg robot_init_y)"/>
+        <param name="robot_init_rot" value="$(arg robot_init_rot)"/>
+    </node>
+</launch>

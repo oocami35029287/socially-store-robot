@@ -1,0 +1,17 @@
+<library path="lib/librviz_panel">
+  <class name="rviz_panel/Imu"
+         type="rviz_panel::ImuDisplay"
+         base_class_type="rviz::Display">
+    <description>
+      Displays direction and state of accelerations from sensor_msgs/Imu messages.
+    </description>
+  </class>
+  
+ <class name="rviz_panel/Ready"
+         type="rviz_panel::ReadyTool"
+         base_class_type="rviz::Tool">
+    <description>
+      Tool for publishing ready msg on topic for path in rviz.
+    </description>
+  </class>  
+</library>

@@ -1,0 +1,18 @@
+<launch>
+    <!--mars robot model-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find tm_description)/urdf/tm700_robot.urdf.xacro"/>
+
+    <!--run rviz with its configuration file-->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tm_description)/launch/rviz_config.rviz" required="true"/>
+
+    <!--joint state publisher-->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"> 
+        <param name="use_gui" value="true"/>
+    </node>
+
+    <!--robot state publisher-->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+        <param name="publish_frequency" value="100"/>
+    </node>    
+
+</launch>
