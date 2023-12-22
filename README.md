@@ -10,6 +10,12 @@ Pull this github
 ```
 git@github.com:oocami35029287/socially-store-robot.git
 ```
+Dependancy
+---
+1. docker
+2. nvidia-docker2
+3. nvidia-driver-535(using)
+
 To run the corrider simulation
 ---
 If you want to navigate robot in the crowd, you should try this.
