@@ -1,0 +1,35 @@
+##########################
+# git command
+##########################
+git init
+git add .
+git commit -m "first commit"
+git branch -M master	##first time
+git remote add origin git@github.com:oocami35029287/socially-store-robot.git    ##first time
+git push -u origin master
+
+
+                           | origin              | master    
+     add        commit     v               push  v
+file----->index-------->local repository------->remote repository
+                                        <------
+                                         clone
+    <------------------------------------------
+                            pull
+
+
+
+###########################
+# docker command
+###########################
+
+docker login
+docker push oocami35029287/marslite_simulation:cuda10
+
+
+
+##########################
+#	submodules
+##########################
+git submodule init
+

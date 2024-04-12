@@ -1,0 +1,62 @@
+*~
+*.ipynb_checkpoints/
+__pycache__
+#*.png
+.bag
+*.pyc
+*.swp
+*.swo
+*.vscode
+*.log
+*.xls
+*.vscode
+*graph
+*.pb
+*.meta
+*.index
+*.gv
+*.svg
+*.out
+*.cu
+#*jpg
+*.zip
+*.tar.gz
+#models/
+!figures/*
+*.csv
+
+# Deep learning related
+*.pth
+*.caffemodel
+#train-*
+#*.wts
+#*.weights
+#*.engine
+
+# Processing data files
+*.vlw
+*.bundle
+# ROS related
+*.bag
+*.pcd
+*.bag
+*.bag.active
+layout_generation/
+retail_arranger/
+build/
+install/
+devel/
+
+darknet/
+bags/
+#workspace
+dope_ws/
+perceptive_mpc_ws/
+mars_lite_remote_ws/
+catkin_ws/
+mpc_ws/
+build_ws/
+# Pedsim model
+#!catkin_ws/src/simulation/pedsim_ros/pedsim_gazebo_plugin/models
+# Pedsim gym test cases
+#!catkin_ws/src/simulation/pedsim_ros/pedsim_simulator/scenarios/gym_env_config
